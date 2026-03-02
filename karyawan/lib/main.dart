@@ -19,9 +19,16 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget{
-  const MyHomePage();
-  
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
+  // ✨ Tambahkan fungsi ini
+  Future<List<Karyawan>> _readJsonData() async {
+    final String response = await rootBundle.loadString('assets/karyawan.json');
+    final List<dynamic> data = json.decode(response);
+    return data.map((json) => Karyawan.fromJson(json)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,9 +37,37 @@ class MyHomePage extends StatelessWidget{
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: Center(
-        child: Text("Data karyawan akan ditampilkan di sini"),
+      body: FutureBuilder(
+        future: _readJsonData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final karyawan = snapshot.data![index];
+                return ListTile(
+                  title: Text(karyawan.nama),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(karyawan.umur.toString()),
+                      Text(karyawan.alamat.jalan),
+                      Text(karyawan.alamat.kota),
+                      Text(karyawan.alamat.provinsi),
+                      Text(karyawan.hobi.join(', ')),
+                    ],
+                  ),
+                );
+              },
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
-      );
+    );
   }
 }
