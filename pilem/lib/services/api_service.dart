@@ -12,7 +12,7 @@ class ApiService {
     final data = json.decode(response.body);
     return List<Map<String, dynamic>>.from(data['results']);
   }
-  
+
   // getTrendingMovies
   Future<List<Map<String, dynamic>>> getTrendingMovies() async {
     final response = await http.get(
@@ -29,7 +29,13 @@ class ApiService {
     final data = json.decode(response.body);
     return List<Map<String, dynamic>>.from(data['results']);
   }
-  
-  // getPopularMovies
 
+  // ✅ Tambahkan fungsi baru di bawah ini
+  Future<List<Map<String, dynamic>>> searchMovies(String query) async {
+    final response = await http.get(
+      Uri.parse("$baseUrl/search/movie?api_key=$apiKey&query=$query"),
+    );
+    final data = json.decode(response.body);
+    return List<Map<String, dynamic>>.from(data['results']);
+  }
 }
