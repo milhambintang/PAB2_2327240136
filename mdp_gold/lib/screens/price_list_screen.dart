@@ -2,6 +2,9 @@ import 'package:flutter/widgets.dart';
 import "package:flutter/material.dart";
 import "package:firebase_database/firebase_database.dart";
 import "package:mdp_gold/services/gold_service.dart";
+import "package:mdp_gold/screens/login_screen.dart";
+import "package:mdp_gold/services/auth_service.dart";
+import 'package:intl/intl.dart';
 
 class PriceListScreen extends StatefulWidget {
   const PriceListScreen({super.key});
@@ -12,7 +15,8 @@ class PriceListScreen extends StatefulWidget {
 
 class _PriceListScreenState extends State<PriceListScreen> {
   final GoldService _goldService = GoldService();
-  
+  final AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,38 +24,57 @@ class _PriceListScreenState extends State<PriceListScreen> {
         title: Text('Harga Emas'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await _authService.signOut();
+              if (mounted) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              }
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
       body: StreamBuilder<DatabaseEvent>(
-        stream: _goldService.getPriceList(), 
-        builder: (context, snapshot){
+        stream: _goldService.getPriceList(),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
-            return  Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
 
+          // Mengambil data dari snapshot Firebase
           final data = snapshot.data?.snapshot.value;
 
-          final Map<dynamic, dynamic> itemsMap = data as Map<dynamic, dynamic>;
-          
-          final items = itemsMap.entries.toList();
+          // Jika data null (kosong), tampilkan pesan
+          if (data == null) {
+            return const Center(child: Text('Belum ada item.'));
+          }
 
+          final Map<dynamic, dynamic> itemsMap = data as Map<dynamic, dynamic>;
+
+          final items = itemsMap.entries.toList();
 
           return ListView.builder(
             itemCount: items.length,
             itemBuilder: (context, index) {
-              final item = Map<String, dynamic>.from(items[index].value as Map,);
-              
-              final String tanggal = item['tanggal']?.toString()?? '';
-              
-              final String harga = item['harga']?.toString()?? '';
-              
-              return ListTile(
-                title: Text(harga),
-                subtitle: Text(tanggal),
-              );
+              final item = Map<String, dynamic>.from(items[index].value as Map);
+
+              final String tanggal = item['tanggal']?.toString() ?? '';
+
+              final harga = NumberFormat.currency(
+                locale: 'id_ID',
+                symbol: 'Rp ',
+                decimalDigits: 0,
+              ).format(item['harga']);
+
+              return ListTile(title: Text(harga), subtitle: Text("Tanggal: $tanggal"));
             },
           );
         },
@@ -59,4 +82,3 @@ class _PriceListScreenState extends State<PriceListScreen> {
     );
   }
 }
-
