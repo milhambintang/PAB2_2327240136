@@ -13,7 +13,7 @@ class FcmService {
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static const String _baseUrl = 'https://notes-rest-api-eta.vercel.app/';
+  static const String _baseUrl = 'https://notes-rest-api-six.vercel.app';
   static const String _topicName = 'notes';
 
   /// Initialize FCM and Local Notifications

@@ -8,7 +8,7 @@ firebase.initializeApp({
   projectId: "notes-8dd2c",
   storageBucket: "notes-8dd2c.firebasestorage.app",
   messagingSenderId: "214380733427",
-  appId: "1:214380733427:web:7c0f3db53ae87098876886",
+  appId: "1:1014103626721:web:f3b42914...",
 });
 
 const messaging = firebase.messaging();
