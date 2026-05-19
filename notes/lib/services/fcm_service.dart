@@ -157,6 +157,34 @@ class FcmService {
     }
   }
 
+    /// Subscribe to a specific topic
+  Future<void> subscribeToTopic(String topic) async {
+    if (kIsWeb) {
+      debugPrint('Topic subscription is not supported on Web.');
+      return;
+    }
+    try {
+      await _messaging.subscribeToTopic(topic);
+      debugPrint('Successfully subscribed to topic: $topic');
+    } catch (e) {
+      debugPrint('Error subscribing to topic $topic: $e');
+    }
+  }
+
+  /// Unsubscribe from a specific topic
+  Future<void> unsubscribeFromTopic(String topic) async {
+    if (kIsWeb) {
+      debugPrint('Topic unsubscription is not supported on Web.');
+      return;
+    }
+    try {
+      await _messaging.unsubscribeFromTopic(topic);
+      debugPrint('Successfully unsubscribed from topic: $topic');
+    } catch (e) {
+      debugPrint('Error unsubscribing from topic $topic: $e');
+    }
+  }
+
   /// Send notification via REST API when a note is added
   Future<void> sendNoteNotification({
     required String title,
