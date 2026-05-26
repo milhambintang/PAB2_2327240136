@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../services/fcm_service.dart';
 import 'subscribe_screen.dart';
+import '../l10n/app_localizations.dart';
+import '../main.dart'; // ← 
 
 class NoteListScreen extends StatefulWidget {
   const NoteListScreen({super.key});
@@ -161,8 +163,12 @@ class _NoteListScreenState extends State<NoteListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final currentLocale = Localizations.localeOf(context).languageCode; // locale aktif
+
     return Scaffold(
       appBar: AppBar(
+        
         title: const Row(
           children: [
             Icon(Icons.sticky_note_2, color: Colors.white),
@@ -201,6 +207,40 @@ class _NoteListScreenState extends State<NoteListScreen> {
                 ),
               );
             },
+          ),
+
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.language),
+            tooltip: l10n.language,
+            onSelected: (code) => MainApp.setLocale(Locale(code)),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'id',
+                child: Row(
+                  children: [
+                    if (currentLocale == 'id')
+                      const Icon(Icons.check, size: 18, color: Colors.deepPurple)
+                    else
+                      const SizedBox(width: 18),
+                    const SizedBox(width: 8),
+                    Text(l10n.languageIndonesian),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'en',
+                child: Row(
+                  children: [
+                    if (currentLocale == 'en')
+                      const Icon(Icons.check, size: 18, color: Colors.deepPurple)
+                    else
+                      const SizedBox(width: 18),
+                    const SizedBox(width: 8),
+                    Text(l10n.languageEnglish),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
 
