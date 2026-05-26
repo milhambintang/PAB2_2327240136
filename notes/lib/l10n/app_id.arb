@@ -91,3 +91,5 @@
   "languageEnglish": "Inggris",
   "languageIndonesian": "Indonesia"
 }
+
+"greeting": "Halo, {name}!"
